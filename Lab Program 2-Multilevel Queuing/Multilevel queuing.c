@@ -1,4 +1,4 @@
-/*#include <stdio.h>
+#include <stdio.h>
 
 struct Process {
     int pid;
@@ -85,4 +85,4 @@ int main() {
 
     return 0;
 }
-*/
+
