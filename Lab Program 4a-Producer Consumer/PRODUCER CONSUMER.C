@@ -1,4 +1,4 @@
-/*#include <stdio.h>
+#include <stdio.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <unistd.h>
@@ -80,20 +80,3 @@ int main() {
 }
 
 
-Compile Command
-gcc producer.c -o producer -lpthread
-Sample Output
-Produced: 1
-Consumed: 1
-Produced: 2
-Consumed: 2
-Produced: 3
-Consumed: 3
-Produced: 4
-Consumed: 4
-Produced: 5
-Consumed: 5
-Produced: 6
-Consumed: 6
-...
-*/

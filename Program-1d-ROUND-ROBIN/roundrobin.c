@@ -68,24 +68,3 @@ int main() {
 }
 
 
-/*Enter number of processes: 4
-
-P1 AT: 0
-P1 BT: 5
-P2 AT: 1
-P2 BT: 4
-P3 AT: 2
-P3 BT: 2
-P4 AT: 3
-P4 BT: 1
-
-Enter Time Quantum: 2
-
-Process AT  BT  CT  TAT WT
-P1      0   5   12  12  7
-P2      1   4   11  10  6
-P3      2   2   6   4   2
-P4      3   1   7   4   3
-
-Average Waiting Time = 4.50
-Average Turnaround Time = 7.50*/
