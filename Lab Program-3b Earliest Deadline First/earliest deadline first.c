@@ -1,73 +1,60 @@
 #include <stdio.h>
 
-typedef struct {
-    int id;
-    int execution;
-    int period;
-    int deadline;
-    int remaining;
-} Task;
-
 int main() {
-    int n, hyperperiod = 1;
+    int n;
 
     printf("Enter number of tasks: ");
     scanf("%d", &n);
 
-    Task tasks[n];
+    int ex[n], period[n], rem[n], deadline[n];
 
-    for (int i = 0; i < n; i++) {
-        tasks[i].id = i + 1;
+    for(int i=0;i<n;i++){
+        printf("Task %d Execution Time: ",i+1);
+        scanf("%d",&ex[i]);
 
-        printf("\nTask %d Execution Time: ", i + 1);
-        scanf("%d", &tasks[i].execution);
+        printf("Task %d Period: ",i+1);
+        scanf("%d",&period[i]);
 
-        printf("Task %d Period: ", i + 1);
-        scanf("%d", &tasks[i].period);
-
-        tasks[i].remaining = 0;
-        tasks[i].deadline = tasks[i].period;
-
-        hyperperiod *= tasks[i].period;
+        rem[i]=0;
+        deadline[i]=period[i];
     }
 
-    printf("\n--- Earliest Deadline First Scheduling ---\n");
+    int hyperperiod = 20;
 
+    printf("\nEDF Scheduling\n");
 
-    for (int time = 0; time < hyperperiod; time++) {
+    for(int time=0; time<hyperperiod; time++){
 
-        for (int i = 0; i < n; i++) {
-            if (time % tasks[i].period == 0) {
-                tasks[i].remaining = tasks[i].execution;
-                tasks[i].deadline = time + tasks[i].period;
+        for(int i=0;i<n;i++){
+            if(time % period[i] == 0){
+                rem[i] = ex[i];
+                deadline[i] = time + period[i];
             }
         }
 
         int earliest = -1;
 
+        for(int i=0;i<n;i++){
+            if(rem[i] > 0){
 
-        for (int i = 0; i < n; i++) {
-            if (tasks[i].remaining > 0) {
-                if (earliest == -1 ||
-                    tasks[i].deadline < tasks[earliest].deadline) {
+                if(earliest == -1 ||
+                   deadline[i] < deadline[earliest]){
+
                     earliest = i;
                 }
             }
         }
 
+        if(earliest != -1){
+            printf("Time %d -> Task %d\n",
+                   time, earliest+1);
 
-        if (earliest != -1) {
-            printf("Time %2d -> Task %d\n",
-                   time,
-                   tasks[earliest].id);
-
-            tasks[earliest].remaining--;
-        } else {
-            printf("Time %2d -> Idle\n", time);
+            rem[earliest]--;
+        }
+        else{
+            printf("Time %d -> Idle\n", time);
         }
     }
 
     return 0;
 }
-
-
