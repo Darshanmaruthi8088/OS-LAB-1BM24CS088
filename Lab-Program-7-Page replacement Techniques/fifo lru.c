@@ -1,160 +1,144 @@
-#include <stdio.h>
+#include<stdio.h>
 
-int main() {
-    int n, frames, choice;
+int main(){
+
+    int n,f,choice;
 
     printf("Enter number of pages: ");
-    scanf("%d", &n);
+    scanf("%d",&n);
 
-    int pages[n];
-    printf("Enter page reference string:\n");
-    for(int i = 0; i < n; i++)
-        scanf("%d", &pages[i]);
+    int page[n];
+
+    printf("Enter pages: ");
+    for(int i=0;i<n;i++){
+        scanf("%d",&page[i]);
+    }
 
     printf("Enter number of frames: ");
-    scanf("%d", &frames);
+    scanf("%d",&f);
 
-    printf("\nChoose Page Replacement Algorithm:\n");
-    printf("1. FIFO\n");
-    printf("2. LRU\n");
-    printf("3. Optimal\n");
+    int frame[f];
+
+    for(int i=0;i<f;i++)
+        frame[i]=-1;
+
+    printf("\n1.FIFO\n2.LRU\n3.Optimal\n");
     printf("Enter choice: ");
-    scanf("%d", &choice);
+    scanf("%d",&choice);
 
-    int frame[frames];
-    int pageFaults = 0;
+    int faults=0;
 
-    for(int i = 0; i < frames; i++)
-        frame[i] = -1;
+    switch(choice){
 
-    switch(choice) {
+    case 1:{
 
-        case 1: {   // FIFO
-            int index = 0;
+        int ptr=0;
 
-            for(int i = 0; i < n; i++) {
-                int found = 0;
+        for(int i=0;i<n;i++){
 
-                for(int j = 0; j < frames; j++) {
-                    if(frame[j] == pages[i]) {
-                        found = 1;
-                        break;
-                    }
-                }
+            int hit=0;
 
-                if(!found) {
-                    frame[index] = pages[i];
-                    index = (index + 1) % frames;
-                    pageFaults++;
+            for(int j=0;j<f;j++){
+                if(frame[j]==page[i]){
+                    hit=1;
+                    break;
                 }
             }
 
-            printf("\nFIFO Page Faults = %d\n", pageFaults);
-            break;
+            if(!hit){
+                frame[ptr]=page[i];
+                ptr=(ptr+1)%f;
+                faults++;
+            }
         }
 
-        case 2: {   // LRU
-            int time[frames];
+        printf("FIFO Page Faults = %d",faults);
+        break;
+    }
 
-            for(int i = 0; i < frames; i++)
-                time[i] = 0;
+    case 2:{
 
-            for(int i = 0; i < n; i++) {
-                int found = 0;
+        int time[f];
 
-                for(int j = 0; j < frames; j++) {
-                    if(frame[j] == pages[i]) {
-                        found = 1;
-                        time[j] = i;
-                        break;
-                    }
+        for(int i=0;i<f;i++)
+            time[i]=0;
+
+        for(int i=0;i<n;i++){
+
+            int hit=0;
+
+            for(int j=0;j<f;j++){
+
+                if(frame[j]==page[i]){
+                    hit=1;
+                    time[j]=i;
+                }
+            }
+
+            if(!hit){
+
+                int pos=0;
+
+                for(int j=1;j<f;j++){
+                    if(time[j]<time[pos])
+                        pos=j;
                 }
 
-                if(!found) {
-                    int pos = -1;
+                frame[pos]=page[i];
+                time[pos]=i;
+                faults++;
+            }
+        }
 
-                    for(int j = 0; j < frames; j++) {
-                        if(frame[j] == -1) {
-                            pos = j;
+        printf("LRU Page Faults = %d",faults);
+        break;
+    }
+
+    case 3:{
+
+        for(int i=0;i<n;i++){
+
+            int hit=0;
+
+            for(int j=0;j<f;j++){
+                if(frame[j]==page[i]){
+                    hit=1;
+                    break;
+                }
+            }
+
+            if(!hit){
+
+                int pos=0;
+                int farthest=-1;
+
+                for(int j=0;j<f;j++){
+
+                    int k;
+
+                    for(k=i+1;k<n;k++){
+                        if(frame[j]==page[k])
                             break;
-                        }
                     }
 
-                    if(pos == -1) {
-                        pos = 0;
-                        for(int j = 1; j < frames; j++) {
-                            if(time[j] < time[pos])
-                                pos = j;
-                        }
+                    if(k>farthest){
+                        farthest=k;
+                        pos=j;
                     }
-
-                    frame[pos] = pages[i];
-                    time[pos] = i;
-                    pageFaults++;
                 }
-            }
 
-            printf("\nLRU Page Faults = %d\n", pageFaults);
-            break;
+                frame[pos]=page[i];
+                faults++;
+            }
         }
 
-        case 3: {   // Optimal
-            for(int i = 0; i < n; i++) {
-                int found = 0;
+        printf("Optimal Page Faults = %d",faults);
+        break;
+    }
 
-                for(int j = 0; j < frames; j++) {
-                    if(frame[j] == pages[i]) {
-                        found = 1;
-                        break;
-                    }
-                }
-
-                if(!found) {
-                    int pos = -1;
-
-                    for(int j = 0; j < frames; j++) {
-                        if(frame[j] == -1) {
-                            pos = j;
-                            break;
-                        }
-                    }
-
-                    if(pos == -1) {
-                        int farthest = -1;
-
-                        for(int j = 0; j < frames; j++) {
-                            int k;
-                            for(k = i + 1; k < n; k++) {
-                                if(frame[j] == pages[k])
-                                    break;
-                            }
-
-                            if(k == n) {
-                                pos = j;
-                                break;
-                            }
-
-                            if(k > farthest) {
-                                farthest = k;
-                                pos = j;
-                            }
-                        }
-                    }
-
-                    frame[pos] = pages[i];
-                    pageFaults++;
-                }
-            }
-
-            printf("\nOptimal Page Faults = %d\n", pageFaults);
-            break;
-        }
-
-        default:
-            printf("Invalid Choice!\n");
+    default:
+        printf("Invalid Choice");
     }
 
     return 0;
 }
-
-
