@@ -1,0 +1,1 @@
+int available[R] = {0, 0, 0};
